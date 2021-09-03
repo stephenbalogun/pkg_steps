@@ -1,0 +1,322 @@
+---
+title: "Introduction to Package Development"
+author: "Balogun Stephen"
+date: '`r format(as.Date("2021-09-04"), "%eth-%B-%Y")`'
+output:
+  html_document:
+    toc: true
+    toc_float:
+      collapsed: true
+      smooth_scroll: true
+    toc_depth: 2
+    theme:
+      version: 4
+      accent: "red"
+      base_font:
+        google: "Fira Sans"
+      heading_font:
+        google: "Pacifico"
+      primary: "#971230"
+      bg: "white"
+      fg: "black"
+      bootswatch: minty
+---
+
+```{r global, include=FALSE, cache=FALSE}
+
+knitr::opts_chunk$set(
+  echo = TRUE,
+  eval = FALSE,
+  warning = FALSE,
+  message = FALSE,
+  cache = FALSE
+)
+
+```
+
+## Introduction
+
+Imagine that you are a healthcare worker, and you are working on automating the next clinic day or the last clinic day of a patient based on:
+
+1. the number of days of medications prescribed, or
+2. the number of days the clinician has decided before the next check-up (if not the same as the number of pill days)
+
+You'd like to get a response that looks like this:
+
+> "Your next clinic day is Saturday, 04 September 2021" *or*
+> "Your last clinic day was Monday, 30th August 2021"
+
+You have worked out the codes required and captured them into three functions shown below:
+
+```{r, funcs}
+## Print date stamp as desired
+date_stamp <- function(date) {
+  date <- as.Date(date)
+  format(date, "%A, %d %B %Y")
+}
+
+
+## last clinic appointment
+appt_last <- function(c_date = Sys.Date(), d_pills, days = NULL) {
+  c_date <- as.Date(c_date)
+
+  dt <- if (is.null(days)) {
+    date_stamp(c_date - as.integer(d_pills))
+  } else {
+    date_stamp(c_date - as.integer(days))
+  }
+
+  cat("Your last clinic appointment was on", dt, sep = " ")
+}
+
+## next clinic appointment
+appt_next <- function(c_date = Sys.Date(), d_pills, days = NULL) {
+  c_date <- as.Date(c_date)
+
+  dt <- if (is.null(days)) {
+    date_stamp(c_date + as.integer(d_pills))
+  } else {
+    date_stamp(c_date + as.integer(days))
+  }
+
+  cat("Your next clinic appointment is on", dt, sep = " ")
+}
+```
+
+## Create a package project
+
+Having being part of the satuRday NairobiR conference, you have decided to develop these functions into a package. You have a colleague who has decided to walk you through the process of the package development. The steps involved are as below:
+
+Step 1: Decide on the name you'd like to call your package (keep it simple and short)
+
+Step 2: Check that the name is not already in used (on CRAN, GitHub and Bioconductor), and also the sentiment
+
+```{r, available}
+available::available("my-pkg-name")
+```
+
+Step 3: When you have decided on a package name that is not already in use, create a package directory
+
+```{r, directory, eval=FALSE}
+library(devtools)
+path <- "path-to-my-pkg/my-pkg-name"
+create_package(path)
+```
+
+A new RStudio containing your project will open. The package folder should have the followings (you might have to click on "more" option in the "file" browser, then toggle on "show Hidden files"):
+
++ .gitignore
+
++ .Rbuildignore
+
++ pkg-name.Rproj
+
++ DESCRIPTION
+
++ NAMESPACE
+
++ R
+
++ .Rproj.user/
+
+
+
+## Your R codes
+
+Step 4: Put your first function in new R scripts.
+
+```{r scripts}
+use_r("function-name")
+```
+
+The function above automatically creates a script in the R directory with the function name you have assigned.
+
+Step 5: optimize your function for package development
+
+```{r, funcs-updated}
+## Print date stamp as desired
+date_stamp <- function(date) {
+  
+  date <- lubridate::as_date(date)
+  
+  base::format(date, "%A, %d %B %Y")
+}
+
+```
+
+Next, we will be iterating through `load_all()` and `check()` functions. `load()` makes our function available to be used in the console, while `check()` "checks" the status of our package development. 
+
+Step 6: load your function, and try it out
+
+```{r, load}
+load_all()
+
+date_stamp("2021-09-03")
+
+date_stamp(Sys.Date())
+```
+
+We are making steady progress...
+
+Step 7: Check package status
+
+```{r, check}
+check()
+```
+Notice that you have one "warning" already being displayed. But what did you do wrong? RStudio gives you more info by letting you know that the warning is from licensing. We will address this in a bit.
+
+
+Step 8: modify the DESCRIPTION metadata. We will show example of two authors.
+
+````
+Title: Appointment Scheduling System for Patients # one line, sentence format
+Authors@R: 
+    c(person(given = "Stephen",
+           family = "Balogun",
+           role = c("aut", "cre"),
+           email = "stephentaiyebalogun@gmail.com",
+           comment = c(ORCID = "0000-0002-9928-3703")),
+      person(given = "Shelmith",
+           family = "Karuiki",
+           role = "aut",
+           email = "shelmith.karuiki@gmail.com",
+           comment = c(ORCID = "0000-0002-2444-4226")))
+Description: An easy, concise and reliable way of scheduling appointment for patients based on their clinic date,
+            number of pills dispensed and/or number of days of appointment given.
+```
+
+Step 9: Pick a license for your package. Common ones are MIT + file license, GPL (GPL-2, GPL-3), CCO, CCBY. You can also use proprietary license.
+
+```{r, license}
+use_mit_license("firstname Lastname")
+```
+
+Step 10: check your package again
+
+```r{, check-2}
+check()
+```
+Notice that the "warning" previously received has cleared.
+
+Step 11: write the documentation for your function. These are stored in the "man" folder (man/)
+
+- click anywhere in your script, then click on the "Code" tab, "Insert roxygen skeleton" and update accordingly
+
+- convert your roxygen code to function documentation
+
+```{r, document}
+document() ## this also exports your function to the NAMESPACE file
+```
+Observe the changes in the NAMESPACE file.
+
+Step 12: import all the functions from other packages used in creating your own function (aside pre-shipped R packages)
+
+```{r, import-func}
+use_package("lubridate")
+```
+Also include the packages as imports in the function. "@import pkg-name" or "@importFrom pkg-name pkg-function". Observe the changes in the DESCRIPTION file.
+
+Step 13: Now, we can install our package locally with the "install()" or using the "install and restart" button from the "build" pane
+
+```{r, install-pkg}
+install()
+```
+
+Step 14: next is unit testing. First, we declare our intent to write unit tests and to use the testthat package for this, thereafter, we write the "test" for our function(s)
+
+```{r, unit-test}
+use_testthat()
+
+## write the unit test
+use_test("function-name")
+```
+
+### Deploy your package
+
+Step 15: It's time to connect to git to manage your package development
+
+```{r, git}
+use_git() ## this creates a ".git" folder
+```
+
+Step 16: now that you have a (basic) functional package, deploy this to GitHub
+
+```{r, github}
+use_github()
+```
+
+Step 17: document your package in a markdown document
+
+```{r, md}
+use_readme_rmd()
+
+## edit your markdown, then build
+build_readme()
+```
+
+Step 18: Commit and push your files to GitHub
+
+Step 19: Iterate through the processes from step 4 to step 18 using the other functions.
+
+Step 20: Install your package from GitHub
+
+- restart your session to clear your environment
+```{r, install}
+remotes::install_github("github-acct/package-name")
+```
+
+## Optionals
+
+### Write supporting documents - vignettes
+
+Step 21: write your vignette(s)
+
+```{r, vignette}
+use_vignette("vignette-name", "Vignette Title")
+```
+Modify the template appropriately, then build your vignette.
+
+```{r, build-vignette}
+build_vignettes()
+```
+Iterate if you are writing more than one vignette.
+
+Step 22: "check" your package again
+
+```{r, check-vignettes}
+check()
+```
+Notice that this introduces a "warning" on Windows OS - "'qpdf' is needed for checks on size reduction of PDFs". You need a application to compress the pdf vignette generated. Follow the steps below to resolve this:
+
+1. Download qpdf for windows from https://sourceforge.net/projects/qpdf/?source=typ_redirect
+2. Unzip the downloaded document 
+3. Copy the extracted  qpdf (qpdf-major-minor-patch) to a directory in C:/Program Files
+4. In R, run run Sys.setenv('PATH' = paste0('C:/Program Files/qpdf-version_numer/bin;', Sys.getenv('PATH')))
+5. Run "check()" again.
+
+
+### Submitting to CRAN
+
+1. In your DESCRIPTION file, update your package version to reflect three digits - major.minor.patch.
+2. Check that your licensing conforms to CRAN policies (any of the licenses described above is fine).
+3. Ensure that you have a valid email address that is open to receiving email from external sources.
+4. Include documentation about your package changes - use `use_news_md()` and modify appropriately.
+5. Fix all errors, warnings. Make efforts to address as many notes as possible. For first CRAN submission, there will be at least one "note 1" notify CRAN that it is a first submission. 
+6. Follow the steps created by the `release()` .
+7. If revisions were made following feedback from CRAN, use `submit_cran()` to avoid walking through the other steps.
+
+### Resources
+
+1. [Setting up your git account](https://r-pkgs.org/git.html#git-setup)
+
+1. [Writing an R package from scratch - Hilary Parker](https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/)
+
+2. [How to develop good R packages - Maëlle Salmon](https://masalmon.eu/2017/12/11/goodrpackages/)
+
+3. [Making your first R package - Fong Chun Chan](https://tinyheero.github.io/jekyll/update/2015/07/26/making-your-first-R-package.html)
+
+4. [Writing an R package from scratch - Tomas Westlake](https://r-mageddon.netlify.app/post/writing-an-r-package-from-scratch/)
+
+
+
+
