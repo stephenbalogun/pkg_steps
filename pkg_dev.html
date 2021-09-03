@@ -329,13 +329,26 @@ date_stamp(Sys.Date())</code></pre>
 <p>We are making steady progress…</p>
 <p>Step 7: Check package status</p>
 <pre class="r"><code>check()</code></pre>
-<p>Notice that you have one “warning” already being displayed. But what did you do wrong? RStudio gives you more info by letting you know that the warning is from licensing. We will address this in a bit.</p>
+<p>Notice that you have two “warnings” already being displayed. But what did you do wrong? RStudio gives you more info by letting you know that one of the warnings is from licensing while the other one relates to the {lubridate} package. We will address these in a bit.</p>
 <p>Step 8: modify the DESCRIPTION metadata. We will show example of two authors.</p>
-<p>`<code>Title: Appointment Scheduling System for Patients # one line, sentence format Authors@R:      c(person(given = "Stephen",            family = "Balogun",            role = c("aut", "cre"),            email = "stephentaiyebalogun@gmail.com",            comment = c(ORCID = "0000-0002-9928-3703")),       person(given = "Shelmith",            family = "Karuiki",            role = "aut",            email = "shelmith.karuiki@gmail.com",            comment = c(ORCID = "0000-0002-2444-4226"))) Description: An easy, concise and reliable way of scheduling appointment for patients based on their clinic date,             number of pills dispensed and/or number of days of appointment given.</code></p>
+<pre><code>Title: Appointment Scheduling System for Patients # one line, sentence format
+Authors@R: 
+    c(person(given = &quot;Stephen&quot;,
+           family = &quot;Balogun&quot;,
+           role = c(&quot;aut&quot;, &quot;cre&quot;),
+           email = &quot;stephentaiyebalogun@gmail.com&quot;,
+           comment = c(ORCID = &quot;0000-0002-9928-3703&quot;)),
+      person(given = &quot;Shelmith&quot;,
+           family = &quot;Karuiki&quot;,
+           role = &quot;aut&quot;,
+           email = &quot;shelmith.kariuki@gmail.com&quot;,
+           comment = c(ORCID = &quot;0000-0002-2444-4226&quot;)))
+Description: An easy, concise and reliable way of scheduling appointment for patients based on their clinic date,
+            number of pills dispensed and/or number of days of appointment given.</code></pre>
 <p>Step 9: Pick a license for your package. Common ones are MIT + file license, GPL (GPL-2, GPL-3), CCO, CCBY. You can also use proprietary license.</p>
 <pre class="r"><code>use_mit_license(&quot;firstname Lastname&quot;)</code></pre>
 <p>Step 10: check your package again</p>
-<p><code>r{, check-2} check()</code> Notice that the “warning” previously received has cleared.</p>
+<p><code>r{, check-2} check()</code> Notice that one of the “warnings” previously received has been addressed.</p>
 <p>Step 11: write the documentation for your function. These are stored in the “man” folder (man/)</p>
 <ul>
 <li><p>click anywhere in your script, then click on the “Code” tab, “Insert roxygen skeleton” and update accordingly</p></li>
@@ -344,7 +357,7 @@ date_stamp(Sys.Date())</code></pre>
 <pre class="r"><code>document() ## this also exports your function to the NAMESPACE file</code></pre>
 <p>Observe the changes in the NAMESPACE file.</p>
 <p>Step 12: import all the functions from other packages used in creating your own function (aside pre-shipped R packages)</p>
-<pre class="r"><code>use_package(&quot;lubridate&quot;)</code></pre>
+<pre class="r"><code>use_package(&quot;lubridate&quot;) ## run &#39;check()&#39; to be sure that the second warning has been removed</code></pre>
 <p>Also include the packages as imports in the function. “<span class="citation">@import</span> pkg-name” or “<span class="citation">@importFrom</span> pkg-name pkg-function”. Observe the changes in the DESCRIPTION file.</p>
 <p>Step 13: Now, we can install our package locally with the “install()” or using the “install and restart” button from the “build” pane</p>
 <pre class="r"><code>install()</code></pre>
@@ -352,11 +365,21 @@ date_stamp(Sys.Date())</code></pre>
 <pre class="r"><code>use_testthat()
 
 ## write the unit test
-use_test(&quot;function-name&quot;)</code></pre>
+use_test(&quot;function-name&quot;)
+
+## in the R script, insert
+
+test_that(&quot;date_stamp is consistent&quot;, {
+  expect_identical(
+    date_stamp(Sys.Date()),
+    format(Sys.Date(), format = &quot;%A, %d %B %Y&quot;)
+  )
+})</code></pre>
 <div id="deploy-your-package" class="section level3">
 <h3>Deploy your package</h3>
-<p>Step 15: It’s time to connect to git to manage your package development</p>
+<p>Step 15: It’s time to connect to git to manage your package development. Run “check()” again to be sure that all is set for deployment.</p>
 <pre class="r"><code>use_git() ## this creates a &quot;.git&quot; folder</code></pre>
+<p>You will be asked if you’d like to commit your codes and restart the computer.</p>
 <p>Step 16: now that you have a (basic) functional package, deploy this to GitHub</p>
 <pre class="r"><code>use_github()</code></pre>
 <p>Step 17: document your package in a markdown document</p>
