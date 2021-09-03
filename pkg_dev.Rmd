@@ -4,6 +4,7 @@ author: "Balogun Stephen"
 date: '`r format(as.Date("2021-09-04"), "%eth-%B-%Y")`'
 output:
   html_document:
+    self-contained: false
     toc: true
     toc_float:
       collapsed: true
