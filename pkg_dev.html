@@ -339,7 +339,7 @@ Authors@R:
            email = &quot;stephentaiyebalogun@gmail.com&quot;,
            comment = c(ORCID = &quot;0000-0002-9928-3703&quot;)),
       person(given = &quot;Shelmith&quot;,
-           family = &quot;Karuiki&quot;,
+           family = &quot;Kariuki&quot;,
            role = &quot;aut&quot;,
            email = &quot;shelmith.kariuki@gmail.com&quot;,
            comment = c(ORCID = &quot;0000-0002-2444-4226&quot;)))
@@ -399,8 +399,8 @@ build_readme()</code></pre>
 </div>
 <div id="optionals" class="section level2">
 <h2>Optionals</h2>
-<div id="write-supporting-documents---vignettes" class="section level3">
-<h3>Write supporting documents - vignettes</h3>
+<div id="write-supporting-documents---vignettes" class="section level4">
+<h4>Write supporting documents - vignettes</h4>
 <p>Step 21: write your vignette(s)</p>
 <pre class="r"><code>use_vignette(&quot;vignette-name&quot;, &quot;Vignette Title&quot;)</code></pre>
 <p>Modify the template appropriately, then build your vignette.</p>
@@ -410,15 +410,15 @@ build_readme()</code></pre>
 <pre class="r"><code>check()</code></pre>
 <p>Notice that this introduces a “warning” on Windows OS - “‘qpdf’ is needed for checks on size reduction of PDFs”. You need a application to compress the pdf vignette generated. Follow the steps below to resolve this:</p>
 <ol style="list-style-type: decimal">
-<li>Download qpdf for windows from <a href="https://sourceforge.net/projects/qpdf/?source=typ_redirect" class="uri">https://sourceforge.net/projects/qpdf/?source=typ_redirect</a></li>
-<li>Unzip the downloaded document</li>
-<li>Copy the extracted qpdf (qpdf-major-minor-patch) to a directory in C:/Program Files</li>
-<li>In R, run run Sys.setenv(‘PATH’ = paste0(‘C:/Program Files/qpdf-version_numer/bin;’, Sys.getenv(‘PATH’)))</li>
-<li>Run “check()” again.</li>
+<li><p>Download qpdf for windows from <a href="https://sourceforge.net/projects/qpdf/?source=typ_redirect" class="uri">https://sourceforge.net/projects/qpdf/?source=typ_redirect</a></p></li>
+<li><p>Unzip the downloaded document</p></li>
+<li><p>Copy the extracted qpdf (qpdf-major-minor-patch) to a directory in C:/Program Files</p></li>
+<li><p>In R, run Sys.setenv(‘PATH’ = paste0(‘C:/Program Files/qpdf-version_numer/bin;’, Sys.getenv(‘PATH’))). One further step may be required to convince Windows that pqdf is safe to run. Navigate to “C:/Program Files/qpdf-version_numer/bin” and execute <code>qpdf.exe</code> (by double-clicking). You’ll need to use the more options link to find the button to run the program.</p></li>
+<li><p>Run “check()” again.</p></li>
 </ol>
 </div>
-<div id="submitting-to-cran" class="section level3">
-<h3>Submitting to CRAN</h3>
+<div id="submitting-to-cran" class="section level4">
+<h4>Submitting to CRAN</h4>
 <ol style="list-style-type: decimal">
 <li>In your DESCRIPTION file, update your package version to reflect three digits - major.minor.patch.</li>
 <li>Check that your licensing conforms to CRAN policies (any of the licenses described above is fine).</li>
@@ -429,8 +429,8 @@ build_readme()</code></pre>
 <li>If revisions were made following feedback from CRAN, use <code>submit_cran()</code> to avoid walking through the other steps.</li>
 </ol>
 </div>
-<div id="resources" class="section level3">
-<h3>Resources</h3>
+<div id="resources" class="section level4">
+<h4>Resources</h4>
 <ol style="list-style-type: decimal">
 <li><p><a href="https://r-pkgs.org/git.html#git-setup">Setting up your git account</a></p></li>
 <li><p><a href="https://hilaryparker.com/2014/04/29/writing-an-r-package-from-scratch/">Writing an R package from scratch - Hilary Parker</a></p></li>
